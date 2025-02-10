@@ -21,9 +21,15 @@
         </div>
     </div>
     <div id="uzivatelska-sekce" class="skryty">
-        <button onclick="odhlasit()">Odhlásit</button>
-        <button onclick="zobrazitHlavniStranu()">Hlavní strana</button>
-        <button onclick="zobrazitProfil()">Můj profil</button>
+        <div id="top-right-buttons">
+            <button onclick="odhlasit()">Odhlásit</button>
+            <button onclick="zobrazitHlavniStranu()">Hlavní strana</button>
+            <button onclick="zobrazitProfil()">Můj profil</button>
+            <label class="switch">
+                <input type="checkbox" id="night-mode-toggle" onclick="toggleNightMode()">
+                <span class="slider round"></span>
+            </label>
+        </div>
         <div id="formular-prispevku">
             <h2>Nový článek</h2>
             <input type="text" id="nazev-clanku" placeholder="Název">

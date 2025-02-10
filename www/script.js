@@ -179,5 +179,9 @@ function filtrujPodleTagu() {
     }
 }
 
+function toggleNightMode() {
+    document.body.classList.toggle('night-mode');
+}
+
 // Inicializace aplikace
 aktualizujPrihlaseni();
