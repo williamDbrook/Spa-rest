@@ -1,8 +1,26 @@
 {
-  "uzivatele": [],
+  "uzivatele": [
+    {
+      "id": 1,
+      "jmeno": "wdb",
+      "heslo": "$2a$10$wBZlwB2.z.ZkBj0R86Irqu9qP5spFMUI8mEPMI1qVjRb3C9uTKJ4G"
+    },
+    {
+      "id": 2,
+      "jmeno": "kdo",
+      "heslo": "$2a$10$c33IfCWcOOC8VU.7GN1MqOZ/E5eH5.kkBVRUo6MZu0MQCuO9odPQG"
+    },
+    {
+      "id": 3,
+      "jmeno": "já",
+      "heslo": "$2a$10$xSj07xWlMHT4bBF8RMxH7uHFB43KdOh4QnQZO1x4u9Vf7fRd0G54."
+    }
+  ],
   "prispevky": [],
   "citace": {
-    "uzivatele": 0,
-    "prispevky": 0
-  }
+    "uzivatele": 3,
+    "prispevky": 8
+  },
+  "kategorie": [],
+  "tagy": []
 }

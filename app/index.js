@@ -14,7 +14,9 @@ const db = new jsondb('./data/databaze.json', {
 // Inicializace DB, pokud neexistuje
 if (!db.has('uzivatele')) db.set('uzivatele', []);
 if (!db.has('prispevky')) db.set('prispevky', []);
-if (!db.has('citace')) db.set('citace', { uzivatele: 0, prispevky: 0 });
+if (!db.has('citace')) db.set('citace', { uzivatele: 0, prispevky: 0, kategorie: 0 });
+if (!db.has('kategorie')) db.set('kategorie', []);
+if (!db.has('tagy')) db.set('tagy', []);
 
 // Middleware
 app.use(express.static('www'));
@@ -38,6 +40,14 @@ function getCitace() {
     return db.get('citace');
 }
 
+function getKategorie() {
+    return db.get('kategorie');
+}
+
+function getTagy() {
+    return db.get('tagy');
+}
+
 function ulozPrispevky(prispevky) {
     db.set('prispevky', prispevky);
 }
@@ -48,6 +58,14 @@ function ulozUzivatele(uzivatele) {
 
 function ulozCitace(citace) {
     db.set('citace', citace);
+}
+
+function ulozKategorie(kategorie) {
+    db.set('kategorie', kategorie);
+}
+
+function ulozTagy(tagy) {
+    db.set('tagy', tagy);
 }
 
 function najdiUzivatele(jmeno) {
@@ -115,7 +133,8 @@ app.get('/api/prispevky', (req, res) => {
         const uzivatel = najdiUzivatelePodleId(prispevek.uzivatel_id);
         return {
             ...prispevek,
-            jmeno: uzivatel ? uzivatel.jmeno : 'neznámý'
+            jmeno: uzivatel ? uzivatel.jmeno : 'neznámý',
+            tags: prispevek.tags || []  // ensure tags is an array
         };
     });
     
@@ -123,7 +142,7 @@ app.get('/api/prispevky', (req, res) => {
 });
 
 app.post('/api/prispevky', vyzadujPrihlaseni, (req, res) => {
-    const { obsah } = req.body;
+    const { title, category, tags, obsah } = req.body;
     const uzivatelId = req.session.uzivatelId;
     const prispevky = getPrispevky();
     const citace = getCitace();
@@ -131,6 +150,9 @@ app.post('/api/prispevky', vyzadujPrihlaseni, (req, res) => {
     const novyPrispevek = {
         id: ++citace.prispevky,
         uzivatel_id: uzivatelId,
+        title,
+        category,
+        tags: tags || [],  // ensure tags is an array
         obsah,
         cas_vytvoreni: new Date().toISOString()
     };
@@ -169,10 +191,49 @@ app.get('/api/profil', vyzadujPrihlaseni, (req, res) => {
         .filter(p => p.uzivatel_id === uzivatelId)
         .map(p => ({
             ...p,
-            jmeno: uzivatel.jmeno
+            jmeno: uzivatel.jmeno,
+            tags: p.tags || []  // ensure tags is an array
         }));
     
     res.json(mojePrispevky);
+});
+
+app.get('/api/kategorie', (req, res) => {
+    res.json(getKategorie());
+});
+
+app.post('/api/kategorie', vyzadujPrihlaseni, (req, res) => {
+    const { nazev } = req.body;
+    const kategorie = getKategorie();
+    const citace = getCitace();
+
+    const novaKategorie = {
+        id: ++citace.kategorie,
+        nazev
+    };
+
+    kategorie.push(novaKategorie);
+    ulozKategorie(kategorie);
+    ulozCitace(citace);
+    res.json({ id: novaKategorie.id });
+});
+
+app.get('/api/tagy', (req, res) => {
+    res.json(getTagy());
+});
+
+app.post('/api/tagy', vyzadujPrihlaseni, (req, res) => {
+    const { nazev } = req.body;
+    const tagy = getTagy();
+
+    if (tagy.includes(nazev)) {
+        res.status(400).json({ chyba: 'Tag již existuje' });
+        return;
+    }
+
+    tagy.push(nazev);
+    ulozTagy(tagy);
+    res.json({ uspech: true });
 });
 
 module.exports = app;
