@@ -123,11 +123,15 @@ app.post('/api/prihlaseni', (req, res) => {
 });
 
 app.post('/api/odhlaseni', (req, res) => {
-    req.session.destroy();
-    res.json({ uspech: true });
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ chyba: 'Chyba při odhlašování' });
+        }
+        res.json({ uspech: true });
+    });
 });
 
-app.get('/api/prispevky', (req, res) => {
+app.get('/api/prispevky', vyzadujPrihlaseni, (req, res) => {
     const prispevky = getPrispevky();
     const obohacenePrispevky = prispevky.map(prispevek => {
         const uzivatel = najdiUzivatelePodleId(prispevek.uzivatel_id);
@@ -138,6 +142,23 @@ app.get('/api/prispevky', (req, res) => {
         };
     });
     
+    res.json(obohacenePrispevky);
+});
+
+app.get('/api/prispevky/tag/:tag', vyzadujPrihlaseni, (req, res) => {
+    const tag = req.params.tag.toLowerCase();
+    const prispevky = getPrispevky();
+    const filteredPrispevky = prispevky.filter(prispevek => prispevek.tags && prispevek.tags.includes(tag));
+    
+    const obohacenePrispevky = filteredPrispevky.map(prispevek => {
+        const uzivatel = najdiUzivatelePodleId(prispevek.uzivatel_id);
+        return {
+            ...prispevek,
+            jmeno: uzivatel ? uzivatel.jmeno : 'neznámý',
+            tags: prispevek.tags || []  // ensure tags is an array
+        };
+    });
+
     res.json(obohacenePrispevky);
 });
 
@@ -198,7 +219,7 @@ app.get('/api/profil', vyzadujPrihlaseni, (req, res) => {
     res.json(mojePrispevky);
 });
 
-app.get('/api/kategorie', (req, res) => {
+app.get('/api/kategorie', vyzadujPrihlaseni, (req, res) => {
     res.json(getKategorie());
 });
 
@@ -218,8 +239,17 @@ app.post('/api/kategorie', vyzadujPrihlaseni, (req, res) => {
     res.json({ id: novaKategorie.id });
 });
 
-app.get('/api/tagy', (req, res) => {
-    res.json(getTagy());
+app.get('/api/tagy', vyzadujPrihlaseni, (req, res) => {
+    const prispevky = getPrispevky();
+    const allTags = new Set();
+    
+    prispevky.forEach(prispevek => {
+        if (prispevek.tags) {
+            prispevek.tags.forEach(tag => allTags.add(tag));
+        }
+    });
+    
+    res.json(Array.from(allTags));
 });
 
 app.post('/api/tagy', vyzadujPrihlaseni, (req, res) => {

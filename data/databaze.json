@@ -16,10 +16,60 @@
       "heslo": "$2a$10$xSj07xWlMHT4bBF8RMxH7uHFB43KdOh4QnQZO1x4u9Vf7fRd0G54."
     }
   ],
-  "prispevky": [],
+  "prispevky": [
+    {
+      "id": 9,
+      "uzivatel_id": 1,
+      "title": "The Lotups type 49",
+      "category": "",
+      "tags": [
+        "racing",
+        "f1",
+        "vintage"
+      ],
+      "obsah": "I love the Lotus type 49",
+      "cas_vytvoreni": "2025-02-10T10:06:16.018Z"
+    },
+    {
+      "id": 10,
+      "uzivatel_id": 2,
+      "title": "kdo",
+      "category": "",
+      "tags": [
+        "nevim",
+        "kdo"
+      ],
+      "obsah": "no já ne",
+      "cas_vytvoreni": "2025-02-10T10:06:46.634Z"
+    },
+    {
+      "id": 11,
+      "uzivatel_id": 3,
+      "title": "no já",
+      "category": "",
+      "tags": [
+        "tady",
+        "jsem"
+      ],
+      "obsah": "kdo jinej než já",
+      "cas_vytvoreni": "2025-02-10T10:07:24.193Z"
+    },
+    {
+      "id": 13,
+      "uzivatel_id": 1,
+      "title": "the McLaren MP4-17",
+      "category": "",
+      "tags": [
+        "racing",
+        "f1"
+      ],
+      "obsah": "the McLaren MP4-17 is fun to drive but its aero is shit",
+      "cas_vytvoreni": "2025-02-10T10:24:15.062Z"
+    }
+  ],
   "citace": {
     "uzivatele": 3,
-    "prispevky": 8
+    "prispevky": 13
   },
   "kategorie": [],
   "tagy": []

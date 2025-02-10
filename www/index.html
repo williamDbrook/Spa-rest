@@ -32,8 +32,15 @@
             <textarea id="obsah-clanku"></textarea>
             <button onclick="vytvorPrispevek()">Publikovat</button>
         </div>
+        <div id="filtr-tagu">
+            <h2>Filtr podle tagů</h2>
+            <select id="tagy-filtr" onchange="filtrujPodleTagu()">
+                <option value="">Všechny tagy</option>
+                <!-- Dynamicky naplněno z API -->
+            </select>
+        </div>
     </div>
-    <div id="sekce-prispevku"></div>
+    <div id="sekce-prispevku" class="skryty"></div>
     <script src="script.js"></script>
 </body>
 </html>

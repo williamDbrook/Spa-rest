@@ -10,6 +10,15 @@ function zobrazPrvek(id, zobrazit = true) {
 function aktualizujPrihlaseni() {
     zobrazPrvek('prihlasovaci-formulare', !jePrihlasen);
     zobrazPrvek('uzivatelska-sekce', jePrihlasen);
+    zobrazPrvek('sekce-prispevku', jePrihlasen);
+
+    if (jePrihlasen) {
+        zobrazitHlavniStranu();
+        nactiKategorie();
+        nactiTagy();
+    } else {
+        document.getElementById('sekce-prispevku').innerHTML = '';
+    }
 }
 
 // API funkce
@@ -49,7 +58,6 @@ function prihlasit() {
         }
         jePrihlasen = true;
         aktualizujPrihlaseni();
-        zobrazitHlavniStranu();
     });
 }
 
@@ -58,7 +66,6 @@ function odhlasit() {
     .then(() => {
         jePrihlasen = false;
         aktualizujPrihlaseni();
-        zobrazitHlavniStranu();
     });
 }
 
@@ -123,36 +130,54 @@ function zobrazPrispevky(prispevky, zobrazitMazani) {
 
 function zobrazitHlavniStranu() {
     aktualniZobrazeni = 'hlavni';
-    fetch('/api/prispevky')
-    .then(res => res.json())
-    .then(prispevky => zobrazPrispevky(prispevky, false));
+    if (jePrihlasen) {
+        fetch('/api/prispevky')
+        .then(res => res.json())
+        .then(prispevky => zobrazPrispevky(prispevky, false));
+    }
 }
 
 function zobrazitProfil() {
     aktualniZobrazeni = 'profil';
-    fetch('/api/profil')
-    .then(res => res.json())
-    .then(prispevky => zobrazPrispevky(prispevky, true));
+    if (jePrihlasen) {
+        fetch('/api/profil')
+        .then(res => res.json())
+        .then(prispevky => zobrazPrispevky(prispevky, true));
+    }
 }
 
 function nactiKategorie() {
-    fetch('/api/kategorie')
-    .then(res => res.json())
-    .then(kategorie => {
-        const select = document.getElementById('kategorie-clanku');
-        select.innerHTML = kategorie.map(k => `<option value="${k.id}">${k.nazev}</option>`).join('');
-    });
+    if (jePrihlasen) {
+        fetch('/api/kategorie')
+        .then(res => res.json())
+        .then(kategorie => {
+            const select = document.getElementById('kategorie-clanku');
+            select.innerHTML = kategorie.map(k => `<option value="${k.id}">${k.nazev}</option>`).join('');
+        });
+    }
 }
 
 function nactiTagy() {
-    fetch('/api/tagy')
-    .then(res => res.json())
-    .then(tagy => {
-        // Process tags if needed
-    });
+    if (jePrihlasen) {
+        fetch('/api/tagy')
+        .then(res => res.json())
+        .then(tagy => {
+            const select = document.getElementById('tagy-filtr');
+            select.innerHTML = `<option value="">Všechny tagy</option>` + tagy.map(tag => `<option value="${tag}">${tag}</option>`).join('');
+        });
+    }
+}
+
+function filtrujPodleTagu() {
+    const vybranyTag = document.getElementById('tagy-filtr').value;
+    if (vybranyTag) {
+        fetch(`/api/prispevky/tag/${vybranyTag}`)
+        .then(res => res.json())
+        .then(prispevky => zobrazPrispevky(prispevky, false));
+    } else {
+        zobrazitHlavniStranu();
+    }
 }
 
 // Inicializace aplikace
 aktualizujPrihlaseni();
-zobrazitHlavniStranu();
-nactiKategorie();
